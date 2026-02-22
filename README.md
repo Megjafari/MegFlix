@@ -50,3 +50,9 @@ npm run dev
 - ⭐ Skriv recensioner med 1-5 stjärnor
 - ✏️ Redigera och ta bort recensioner
 - 🗑 Ta bort filmer från listan
+
+## Screenshots
+
+### Min lista
+<img width="800" alt="Screenshot 2026-02-22 163857" src="https://github.com/user-attachments/assets/a514a031-086c-4145-aac3-76d37015109f" />
+
