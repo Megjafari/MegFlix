@@ -8,6 +8,10 @@ Netflix-inspirerad frontend till MovieLibraryApi byggd med React + Vite.
 - CSS Modules
 - TMDB API
 
+## Backend
+Detta projekt kräver att backend körs lokalt:
+[MovieLibraryApi](https://github.com/Megjafari/MovieLibraryApi)
+
 ## Kom igång
 
 ### Krav
