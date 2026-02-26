@@ -9,62 +9,49 @@ import EditMovieModal from './components/EditMovieModal.jsx';
 import Toast         from './components/Toast.jsx';
 import styles        from './App.module.css';
 
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
 const normalizeTitle = t => t?.toLowerCase().trim() ?? '';
 
 export default function App() {
-  // ── State ──
   const [tab, setTab]                   = useState('home');
   const [scrolled, setScrolled]         = useState(false);
   const [searchQuery, setSearchQuery]   = useState('');
 
-  // Backend data
   const [myMovies,  setMyMovies]        = useState([]);
   const [reviews,   setReviews]         = useState([]);
 
-  // TMDB data for rows
   const [tmdbTrending, setTmdbTrending] = useState([]);
   const [tmdbPopular,  setTmdbPopular]  = useState([]);
   const [tmdbTopRated, setTmdbTopRated] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
 
-  // TMDB detail cache  title.lower → full tmdb object
   const [tmdbCache, setTmdbCache]       = useState({});
 
-  // Modal
   const [selectedTmdb,    setSelectedTmdb]    = useState(null);
   const [selectedBackend, setSelectedBackend] = useState(null);
   const [editMovie,       setEditMovie]       = useState(null);
 
-  // Toast
   const [toast, setToast]               = useState(null);
   const toastTimer                      = useRef(null);
 
-  // Loading
   const [loadingBackend, setLoadingBackend] = useState(true);
 
-  // ── Computed ──
-  // Set of lower-cased titles that are in the user's list
   const myTitleSet = new Set(myMovies.map(m => normalizeTitle(m.title)));
 
-  // ── Toast helper ──
-const showToast = (message, type = 'default') => {
-  clearTimeout(toastTimer.current);
-  setToast(null); // nollställ först
-  setTimeout(() => {
-    setToast({ message, type });
-    toastTimer.current = setTimeout(() => setToast(null), 3200);
-  }, 10); // liten delay så React hinner unmount/remount
-};
+  const showToast = (message, type = 'default') => {
+    clearTimeout(toastTimer.current);
+    setToast(null);
+    setTimeout(() => {
+      setToast({ message, type });
+      toastTimer.current = setTimeout(() => setToast(null), 3200);
+    }, 10);
+  };
 
-  // ── Scroll ──
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // ── Initial load ──
   useEffect(() => { loadBackend(); }, []);
   useEffect(() => { loadTmdbRows(); }, []);
 
@@ -78,7 +65,7 @@ const showToast = (message, type = 'default') => {
       setMyMovies(movs);
       setReviews(revs);
     } catch {
-      showToast('⚠️ Kunde inte nå backend. Kör dotnet run?', 'error');
+      showToast('⚠️ Could not reach backend.', 'error');
     }
     setLoadingBackend(false);
   };
@@ -93,19 +80,15 @@ const showToast = (message, type = 'default') => {
       setTmdbTrending(tr.results  || []);
       setTmdbPopular( po.results  || []);
       setTmdbTopRated(top.results || []);
-    } catch {
-      // TMDB key not set – rows just stay empty
-    }
+    } catch {}
   };
 
-  // Enrich TMDB rows with backend _backendId for review counts
   const enrichWithBackend = useCallback((tmdbList) =>
     tmdbList.map(t => {
       const be = myMovies.find(m => normalizeTitle(m.title) === normalizeTitle(t.title));
       return be ? { ...t, _backendId: be.id } : t;
     }), [myMovies]);
 
-  // ── TMDB search ──
   useEffect(() => {
     if (!searchQuery.trim()) { setSearchResults([]); return; }
     const timer = setTimeout(async () => {
@@ -117,9 +100,7 @@ const showToast = (message, type = 'default') => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // ── Open movie (from any card) ──
   const openMovie = async (tmdbMovie) => {
-    // tmdbMovie might be partial (from row) – fetch details for genres etc.
     let full = tmdbCache[normalizeTitle(tmdbMovie.title)];
     if (!full && tmdbMovie.id) {
       try {
@@ -132,7 +113,6 @@ const showToast = (message, type = 'default') => {
     setSelectedBackend(beMovie);
   };
 
-  // When opening a movie that's only in our backend (no tmdb match passed)
   const openBackendMovie = async (beMovie) => {
     let tmdbData = tmdbCache[normalizeTitle(beMovie.title)];
     if (!tmdbData) {
@@ -151,11 +131,10 @@ const showToast = (message, type = 'default') => {
 
   const closeModal = () => { setSelectedTmdb(null); setSelectedBackend(null); };
 
-  // ── CRUD: Movies ──
   const handleAddToList = async (tmdbMovie) => {
     const key = normalizeTitle(tmdbMovie.title);
     if (myTitleSet.has(key)) {
-      showToast('⚠️ Filmen finns redan i din lista!', 'error');
+      showToast('⚠️ Movie already in your list!', 'error');
       return;
     }
     try {
@@ -167,62 +146,58 @@ const showToast = (message, type = 'default') => {
       const created = await backendApi.createMovie(body);
       setMyMovies(prev => [...prev, created]);
       setSelectedBackend(created);
-      showToast('✅ Tillagd i din lista!', 'success');
-    } catch { showToast('❌ Kunde inte lägga till film', 'error'); }
+      showToast('✅ Added to your list!', 'success');
+    } catch { showToast('❌ Could not add movie', 'error'); }
   };
 
   const handleEditMovie = async (id, data) => {
     try {
       await backendApi.updateMovie(id, data);
       setMyMovies(prev => prev.map(m => m.id === id ? { ...m, ...data } : m));
-      showToast('✅ Film uppdaterad!', 'success');
-    } catch { showToast('❌ Kunde inte uppdatera', 'error'); }
+      showToast('✅ Movie updated!', 'success');
+    } catch { showToast('❌ Could not update', 'error'); }
   };
 
   const handleDeleteFromList = async (id) => {
-    if (!window.confirm('Ta bort filmen och alla dess recensioner?')) return;
+    if (!window.confirm('Remove movie and all its reviews?')) return;
     try {
       await backendApi.deleteMovie(id);
       setMyMovies(prev => prev.filter(m => m.id !== id));
       setReviews(prev  => prev.filter(r => r.movieId !== id));
       closeModal();
-      showToast('🗑 Film borttagen');
-    } catch { showToast('❌ Kunde inte ta bort', 'error'); }
+      showToast('🗑 Movie removed');
+    } catch { showToast('❌ Could not remove', 'error'); }
   };
 
-  // ── CRUD: Reviews ──
   const handleCreateReview = async (data) => {
     try {
       const created = await backendApi.createReview(data);
       setReviews(prev => [...prev, created]);
-      showToast('⭐ Recension publicerad!', 'success');
-    } catch { showToast('❌ Kunde inte spara recension', 'error'); }
+      showToast('⭐ Review published!', 'success');
+    } catch { showToast('❌ Could not save review', 'error'); }
   };
 
   const handleUpdateReview = async (id, data) => {
     try {
       await backendApi.updateReview(id, data);
       setReviews(prev => prev.map(r => r.id === id ? { ...r, ...data } : r));
-      showToast('✅ Recension uppdaterad!', 'success');
-    } catch { showToast('❌ Kunde inte uppdatera recension', 'error'); }
+      showToast('✅ Review updated!', 'success');
+    } catch { showToast('❌ Could not update review', 'error'); }
   };
 
   const handleDeleteReview = async (id) => {
-    if (!window.confirm('Ta bort recensionen?')) return;
+    if (!window.confirm('Delete this review?')) return;
     try {
       await backendApi.deleteReview(id);
       setReviews(prev => prev.filter(r => r.id !== id));
-      showToast('🗑 Recension borttagen');
-    } catch { showToast('❌ Kunde inte ta bort recension', 'error'); }
+      showToast('🗑 Review deleted');
+    } catch { showToast('❌ Could not delete review', 'error'); }
   };
 
-  // ── Hero data ──
-  // Pick first trending movie as hero
   const heroTmdb    = tmdbTrending[0] || null;
   const heroBackend = heroTmdb ? myMovies.find(m => normalizeTitle(m.title) === normalizeTitle(heroTmdb?.title)) : null;
   const heroInList  = heroTmdb ? myTitleSet.has(normalizeTitle(heroTmdb?.title)) : false;
 
-  // My list enriched with TMDB poster data
   const myMoviesEnriched = myMovies.map(m => {
     const td = tmdbCache[normalizeTitle(m.title)] ||
                tmdbTrending.find(t => normalizeTitle(t.title) === normalizeTitle(m.title)) ||
@@ -230,7 +205,6 @@ const showToast = (message, type = 'default') => {
     return td ? { ...m, poster_path: td.poster_path, vote_average: td.vote_average, release_date: td.release_date || m.releaseDate } : m;
   });
 
-  // Top rated from my list
   const myTopRated = [...myMoviesEnriched]
     .map(m => {
       const revs = reviews.filter(r => r.movieId === m.id);
@@ -251,7 +225,6 @@ const showToast = (message, type = 'default') => {
         scrolled={scrolled}
       />
 
-      {/* ── HOME ── */}
       {tab === 'home' && (
         <>
           <Hero
@@ -265,7 +238,7 @@ const showToast = (message, type = 'default') => {
 
           {myMoviesEnriched.length > 0 && (
             <MovieRow
-              title="MIN LISTA"
+              title="MY LIST"
               movies={myMoviesEnriched}
               myMovieTitles={myTitleSet}
               reviews={reviews}
@@ -274,7 +247,7 @@ const showToast = (message, type = 'default') => {
           )}
 
           <MovieRow
-            title="🔥 TRENDING DEN HÄR VECKAN"
+            title="🔥 TRENDING THIS WEEK"
             movies={enrichWithBackend(tmdbTrending).slice(0, 14)}
             myMovieTitles={myTitleSet}
             reviews={reviews}
@@ -283,7 +256,7 @@ const showToast = (message, type = 'default') => {
 
           {myTopRated.length > 0 && (
             <MovieRow
-              title="⭐ DINA HÖGST BETYGSATTA"
+              title="⭐ YOUR TOP RATED"
               movies={myTopRated}
               myMovieTitles={myTitleSet}
               reviews={reviews}
@@ -292,7 +265,7 @@ const showToast = (message, type = 'default') => {
           )}
 
           <MovieRow
-            title="POPULÄRT JUST NU"
+            title="POPULAR RIGHT NOW"
             movies={enrichWithBackend(tmdbPopular).slice(0, 14)}
             myMovieTitles={myTitleSet}
             reviews={reviews}
@@ -300,7 +273,7 @@ const showToast = (message, type = 'default') => {
           />
 
           <MovieRow
-            title="HÖGST BETYGSATT GENOM TIDERNA"
+            title="ALL TIME TOP RATED"
             movies={enrichWithBackend(tmdbTopRated).slice(0, 14)}
             myMovieTitles={myTitleSet}
             reviews={reviews}
@@ -309,20 +282,19 @@ const showToast = (message, type = 'default') => {
         </>
       )}
 
-      {/* ── MY LIST ── */}
       {tab === 'movies' && (
         <div className={styles.page}>
           <div className={styles.pageHeader}>
-            <h1 className={styles.pageTitle}>MIN LISTA</h1>
-            <span className={styles.pageCount}>{myMovies.length} filmer</span>
+            <h1 className={styles.pageTitle}>MY LIST</h1>
+            <span className={styles.pageCount}>{myMovies.length} movies</span>
           </div>
           {loadingBackend ? (
             <div className={styles.loadingCenter}><span className={styles.spinner} /></div>
           ) : myMoviesEnriched.length === 0 ? (
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>🎬</div>
-              <p>Din lista är tom.</p>
-              <p>Bläddra bland filmerna och lägg till dina favoriter!</p>
+              <p>Your list is empty.</p>
+              <p>Browse movies and add your favorites!</p>
             </div>
           ) : (
             <div className={styles.grid}>
@@ -345,18 +317,17 @@ const showToast = (message, type = 'default') => {
         </div>
       )}
 
-      {/* ── REVIEWS ── */}
       {tab === 'reviews' && (
         <div className={styles.page}>
           <div className={styles.pageHeader}>
-            <h1 className={styles.pageTitle}>RECENSIONER</h1>
-            <span className={styles.pageCount}>{reviews.length} totalt</span>
+            <h1 className={styles.pageTitle}>REVIEWS</h1>
+            <span className={styles.pageCount}>{reviews.length} total</span>
           </div>
           {reviews.length === 0 ? (
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>⭐</div>
-              <p>Inga recensioner ännu.</p>
-              <p>Öppna en film i din lista och recensera!</p>
+              <p>No reviews yet.</p>
+              <p>Open a movie from your list and review it!</p>
             </div>
           ) : (
             <div className={styles.reviewsPage}>
@@ -368,7 +339,7 @@ const showToast = (message, type = 'default') => {
                       className={styles.reviewMovieTitle}
                       onClick={() => movie && openBackendMovie(movie)}
                     >
-                      {movie?.title || 'Okänd film'} →
+                      {movie?.title || 'Unknown movie'} →
                     </div>
                     <div className={styles.reviewCard}>
                       <div className={styles.reviewTop}>
@@ -381,12 +352,12 @@ const showToast = (message, type = 'default') => {
                           <button
                             className={styles.rEditBtn}
                             onClick={() => movie && openBackendMovie(movie)}
-                            title="Redigera (öppna film)"
+                            title="Edit (open movie)"
                           >✏️</button>
                           <button
                             className={styles.rDelBtn}
                             onClick={() => handleDeleteReview(r.id)}
-                            title="Ta bort"
+                            title="Delete"
                           >🗑</button>
                         </div>
                       </div>
@@ -400,19 +371,18 @@ const showToast = (message, type = 'default') => {
         </div>
       )}
 
-      {/* ── SEARCH ── */}
       {tab === 'search' && (
         <div className={styles.page}>
           <div className={styles.pageHeader}>
             <h1 className={styles.pageTitle}>
-              SÖK: <span className={styles.searchTerm}>"{searchQuery}"</span>
+              SEARCH: <span className={styles.searchTerm}>"{searchQuery}"</span>
             </h1>
-            <span className={styles.pageCount}>{searchResults.length} resultat</span>
+            <span className={styles.pageCount}>{searchResults.length} results</span>
           </div>
           {searchResults.length === 0 ? (
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>🔍</div>
-              <p>Inga resultat. Prova ett annat sökord.</p>
+              <p>No results. Try a different search term.</p>
             </div>
           ) : (
             <div className={styles.grid}>
@@ -437,7 +407,6 @@ const showToast = (message, type = 'default') => {
         </div>
       )}
 
-      {/* ── MODALS ── */}
       {(selectedTmdb || selectedBackend) && (
         <MovieModal
           tmdbMovie={selectedTmdb}

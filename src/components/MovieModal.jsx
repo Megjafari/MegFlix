@@ -12,10 +12,10 @@ function ReviewCard({ review, onDelete, onEdit }) {
           <StarRating value={review.rating} readonly />
         </div>
         <div className={styles.rBtns}>
-          <button className={styles.rEditBtn} onClick={() => onEdit(review)} title="Redigera">
+          <button className={styles.rEditBtn} onClick={() => onEdit(review)} title="Edit">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
-          <button className={styles.rDelBtn} onClick={() => onDelete(review.id)} title="Ta bort">
+          <button className={styles.rDelBtn} onClick={() => onDelete(review.id)} title="Delete">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
           </button>
         </div>
@@ -41,10 +41,10 @@ function ReviewForm({ movieId, initial, onSubmit, onCancel }) {
 
   return (
     <div className={styles.rForm}>
-      <p className={styles.rFormTitle}>{isEdit ? '✏️ Redigera recension' : '✍️ Skriv recension'}</p>
+      <p className={styles.rFormTitle}>{isEdit ? '✏️ Edit review' : '✍️ Write a review'}</p>
       <textarea
         className={styles.rTextarea}
-        placeholder="Vad tyckte du om filmen?"
+        placeholder="What did you think of the movie?"
         value={comment}
         onChange={e => setComment(e.target.value)}
         rows={3}
@@ -52,13 +52,13 @@ function ReviewForm({ movieId, initial, onSubmit, onCancel }) {
       <div className={styles.rFormBottom}>
         <StarRating value={rating} onChange={setRating} />
         <div className={styles.rFormBtns}>
-          {onCancel && <button className={styles.btnGhost} onClick={onCancel}>Avbryt</button>}
+          {onCancel && <button className={styles.btnGhost} onClick={onCancel}>Cancel</button>}
           <button
             className={styles.btnRed}
             onClick={handleSubmit}
             disabled={loading || !comment.trim() || rating === 0}
           >
-            {loading ? <span className={styles.spinner} /> : isEdit ? 'Spara' : 'Publicera'}
+            {loading ? <span className={styles.spinner} /> : isEdit ? 'Save' : 'Publish'}
           </button>
         </div>
       </div>
@@ -67,8 +67,8 @@ function ReviewForm({ movieId, initial, onSubmit, onCancel }) {
 }
 
 export default function MovieModal({
-  backendMovie,   // from our DB (or null if not added yet)
-  tmdbMovie,      // from TMDB
+  backendMovie,
+  tmdbMovie,
   reviews,
   isInList,
   onClose,
@@ -111,17 +111,15 @@ export default function MovieModal({
   return (
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={styles.modal}>
-        {/* Backdrop */}
         <div className={styles.backdropWrap}>
           {backdrop
             ? <img className={styles.backdrop} src={backdrop} alt="" />
             : <div className={styles.backdropFallback}>🎬</div>
           }
           <div className={styles.backdropGrad} />
-          <button className={styles.closeBtn} onClick={onClose} aria-label="Stäng">✕</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">✕</button>
         </div>
 
-        {/* Body */}
         <div className={styles.body}>
           <h2 className={styles.title}>{title}</h2>
 
@@ -145,32 +143,30 @@ export default function MovieModal({
 
           {overview && <p className={styles.overview}>{overview}</p>}
 
-          {/* Actions */}
           <div className={styles.actions}>
             {isInList ? (
               <>
                 <button className={styles.btnPrimary} onClick={() => { setShowForm(v => !v); setEditingReview(null); }}>
-                  {showForm ? '✕ Avbryt' : '✍️ Recensera'}
+                  {showForm ? '✕ Cancel' : '✍️ Review'}
                 </button>
                 <button className={styles.btnGhost} onClick={() => onEditMovie(backendMovie)}>
-                  ✏️ Redigera
+                  ✏️ Edit
                 </button>
                 <button className={styles.btnDanger} onClick={() => onDeleteFromList(backendMovie.id)}>
-                  🗑 Ta bort
+                  🗑 Remove
                 </button>
               </>
             ) : (
               <button className={styles.btnPrimary} onClick={() => onAddToList(tmdbMovie)}>
-                ＋ Lägg till i listan
+                ＋ Add to list
               </button>
             )}
           </div>
 
-          {/* Reviews */}
           {isInList && (
             <>
               <hr className={styles.divider} />
-              <h3 className={styles.reviewsTitle}>RECENSIONER ({movieReviews.length})</h3>
+              <h3 className={styles.reviewsTitle}>REVIEWS ({movieReviews.length})</h3>
 
               {showForm && !editingReview && (
                 <ReviewForm
@@ -192,7 +188,7 @@ export default function MovieModal({
               )}
 
               {movieReviews.length === 0 && !showForm ? (
-                <p className={styles.emptyReviews}>Inga recensioner än – var den första! 🎬</p>
+                <p className={styles.emptyReviews}>No reviews yet — be the first! 🎬</p>
               ) : (
                 <div className={styles.reviewList}>
                   {movieReviews.map(r => (

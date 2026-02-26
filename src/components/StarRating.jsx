@@ -10,7 +10,7 @@ export default function StarRating({ value, onChange, readonly = false }) {
           className={`${styles.star} ${n <= value ? styles.filled : ''} ${readonly ? styles.readonly : ''}`}
           onClick={() => !readonly && onChange?.(n)}
           disabled={readonly}
-          aria-label={`${n} stjärnor`}
+          aria-label={`${n} star${n > 1 ? 's' : ''}`}
         >
           ★
         </button>

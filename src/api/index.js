@@ -25,12 +25,12 @@ export const TMDB_IMG_ORIG = 'https://image.tmdb.org/t/p/original';
 export const TMDB_IMG_W200 = 'https://image.tmdb.org/t/p/w200';
 
 const tmdbFetch = (path) =>
-  fetch(`${TMDB_BASE}${path}?api_key=${TMDB_KEY}&language=sv-SE`).then(r => r.json());
+  fetch(`${TMDB_BASE}${path}?api_key=${TMDB_KEY}&language=en-US`).then(r => r.json());
 
 export const tmdbApi = {
   trending: ()   => tmdbFetch('/trending/movie/week'),
   popular:  ()   => tmdbFetch('/movie/popular'),
   topRated: ()   => tmdbFetch('/movie/top_rated'),
   details:  (id) => tmdbFetch(`/movie/${id}`),
-  search:   (q)  => fetch(`${TMDB_BASE}/search/movie?api_key=${TMDB_KEY}&language=sv-SE&query=${encodeURIComponent(q)}`).then(r => r.json()),
+  search:   (q)  => fetch(`${TMDB_BASE}/search/movie?api_key=${TMDB_KEY}&language=en-US&query=${encodeURIComponent(q)}`).then(r => r.json()),
 };

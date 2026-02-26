@@ -19,27 +19,27 @@ export default function EditMovieModal({ movie, onSave, onClose }) {
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Redigera film</h2>
+          <h2 className={styles.title}>Edit Movie</h2>
           <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
 
         <div className={styles.form}>
           <div className={styles.field}>
-            <label className={styles.label}>Titel *</label>
+            <label className={styles.label}>Title *</label>
             <input className={styles.inp} value={title} onChange={e => setTitle(e.target.value)} />
           </div>
           <div className={styles.field}>
-            <label className={styles.label}>Beskrivning</label>
+            <label className={styles.label}>Description</label>
             <textarea className={styles.ta} value={description} onChange={e => setDescription(e.target.value)} rows={3} />
           </div>
           <div className={styles.field}>
-            <label className={styles.label}>Utgivningsdatum</label>
+            <label className={styles.label}>Release Date</label>
             <input className={styles.inp} type="date" value={releaseDate} onChange={e => setReleaseDate(e.target.value)} />
           </div>
           <div className={styles.actions}>
-            <button className={styles.btnGhost} onClick={onClose}>Avbryt</button>
+            <button className={styles.btnGhost} onClick={onClose}>Cancel</button>
             <button className={styles.btnRed} onClick={handleSave} disabled={loading || !title.trim()}>
-              {loading ? <span className={styles.spinner} /> : 'Spara ändringar'}
+              {loading ? <span className={styles.spinner} /> : 'Save changes'}
             </button>
           </div>
         </div>

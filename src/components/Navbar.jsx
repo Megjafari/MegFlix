@@ -8,9 +8,9 @@ export default function Navbar({ activeTab, setTab, searchQuery, setSearchQuery,
 
       <div className={styles.tabs}>
         {[
-          ['home',    'Hem'],
-          ['movies',  'Min lista'],
-          ['reviews', 'Recensioner'],
+          ['home',    'Home'],
+          ['movies',  'My List'],
+          ['reviews', 'Reviews'],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -29,7 +29,7 @@ export default function Navbar({ activeTab, setTab, searchQuery, setSearchQuery,
           </svg>
           <input
             className={styles.searchInput}
-            placeholder="Sök bland TMDB-filmer…"
+            placeholder="Search TMDB movies…"
             value={searchQuery}
             onChange={e => {
               setSearchQuery(e.target.value);
@@ -38,9 +38,6 @@ export default function Navbar({ activeTab, setTab, searchQuery, setSearchQuery,
             }}
           />
         </div>
-        <button className={styles.addBtn} onClick={() => setTab('add')}>
-          <span>+</span> Lägg till film
-        </button>
       </div>
     </nav>
   );

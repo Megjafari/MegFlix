@@ -2,7 +2,6 @@ import { TMDB_IMG_W500 } from '../api/index.js';
 import styles from './MovieCard.module.css';
 
 export default function MovieCard({ movie, isInList, reviewCount, avgRating, onClick }) {
-  // movie can be either a TMDB result or a backend movie enriched with tmdb data
   const poster  = movie.poster_path   ? `${TMDB_IMG_W500}${movie.poster_path}`   : null;
   const title   = movie.title;
   const year    = (movie.release_date || movie.releaseDate || '')?.slice(0, 4);
@@ -21,7 +20,7 @@ export default function MovieCard({ movie, isInList, reviewCount, avgRating, onC
       {isInList && (
         <div className={styles.inListBadge}>
           <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6 9 17l-5-5"/></svg>
-          I listan
+          In list
         </div>
       )}
 
@@ -31,7 +30,7 @@ export default function MovieCard({ movie, isInList, reviewCount, avgRating, onC
           {isInList && reviewCount > 0 ? (
             <span className={styles.stars}>
               {'★'.repeat(avgRating)}{'☆'.repeat(5 - avgRating)}
-              <em>{reviewCount} rec.</em>
+              <em>{reviewCount} rev.</em>
             </span>
           ) : tmdbRating ? (
             <span className={styles.tmdbScore}>

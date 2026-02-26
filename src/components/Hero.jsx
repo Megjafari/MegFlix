@@ -30,7 +30,7 @@ export default function Hero({ tmdbMovie, backendMovie, reviews, onWatch, onAdd,
 
       <div className={styles.content}>
         {isInList && (
-          <div className={styles.inListBadge}>✓ I din lista</div>
+          <div className={styles.inListBadge}>✓ In your list</div>
         )}
         <h1 className={styles.title}>{tmdbMovie.title}</h1>
 
@@ -43,7 +43,7 @@ export default function Hero({ tmdbMovie, backendMovie, reviews, onWatch, onAdd,
             </span>
           )}
           {avgRating && (
-            <span className={styles.myRating}>⭐ {avgRating}/5 din lista</span>
+            <span className={styles.myRating}>⭐ {avgRating}/5 your list</span>
           )}
         </div>
 
@@ -55,16 +55,16 @@ export default function Hero({ tmdbMovie, backendMovie, reviews, onWatch, onAdd,
           {isInList ? (
             <button className={styles.btnPrimary} onClick={() => onWatch(tmdbMovie)}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              Visa &amp; Recensera
+              View &amp; Review
             </button>
           ) : (
             <button className={styles.btnPrimary} onClick={() => onAdd(tmdbMovie)}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14"/></svg>
-              Lägg till i listan
+              Add to list
             </button>
           )}
           <button className={styles.btnSecondary} onClick={() => onWatch(tmdbMovie)}>
-            ℹ Mer info
+            More info
           </button>
         </div>
       </div>
