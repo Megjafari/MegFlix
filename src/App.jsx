@@ -262,7 +262,7 @@ export default function App() {
       <Navbar scrolled={scrolled} token={token} logout={logout} />
 
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home tmdbTrending={tmdbTrending} />} />
         <Route path="/movies" element={<MoviesPage {...sharedProps} tmdbTrending={tmdbTrending} tmdbPopular={tmdbPopular} tmdbTopRated={tmdbTopRated} />} />
         <Route path="/series" element={<SeriesPage {...sharedProps} tmdbTrendingTv={tmdbTrendingTv} tmdbPopularTv={tmdbPopularTv} tmdbTopRatedTv={tmdbTopRatedTv} />} />
         <Route path="/anime" element={<AnimePage {...sharedProps} jikanTrending={jikanTrending} jikanPopular={jikanPopular} jikanTopRated={jikanTopRated} />} />
