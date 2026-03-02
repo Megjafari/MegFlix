@@ -67,7 +67,7 @@ export default function SeriesPage({
       )}
 
         {searchQuery && (
-          <div className={styles.grid} style={{ padding: '20px 40px', gridTemplateColumns: 'repeat(2, 1fr)' }}>
+          <div className={styles.grid} style={{ padding: '80px 40px 0', gridTemplateColumns: window.innerWidth <= 768 ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(180px, 1fr))' }}>
             {searchResults.map(m => {
               const isInList = myTitleSet.has(normalizeTitle(m.title));
               const be = isInList ? myMovies.find(mv => normalizeTitle(mv.title) === normalizeTitle(m.title)) : null;

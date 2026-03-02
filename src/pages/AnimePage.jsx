@@ -73,7 +73,7 @@ export default function AnimePage({
       )}
 
         {searchQuery && (
-          <div className={styles.grid} style={{ padding: '20px 40px', gridTemplateColumns: 'repeat(2, 1fr)' }}>
+          <div className={styles.grid} style={{ padding: '80px 40px 0', gridTemplateColumns: window.innerWidth <= 768 ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(180px, 1fr))' }}>
             {searchResults.map(a => {
               const m = { id: a.mal_id, title: a.title, poster_path: null, _jikanImage: a.images?.jpg?.large_image_url, overview: a.synopsis, vote_average: a.score };
               const isInList = myTitleSet.has(normalizeTitle(m.title));
