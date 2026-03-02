@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { tmdbApi, TMDB_IMG_W500 } from '../api/index.js';
+import { useState } from 'react';
+import { tmdbApi } from '../api/index.js';
 import Hero from '../components/Hero.jsx';
 import MovieRow from '../components/MovieRow.jsx';
 import MovieCard from '../components/MovieCard.jsx';
@@ -36,49 +36,60 @@ export default function MoviesPage({
   const heroBackend = heroTmdb ? myMovies.find(m => normalizeTitle(m.title) === normalizeTitle(heroTmdb?.title)) : null;
   const heroInList = heroTmdb ? myTitleSet.has(normalizeTitle(heroTmdb?.title)) : false;
 
-  return (
-    <div>
-      {!searchQuery && (
-        <>
-          <Hero
-            tmdbMovie={heroTmdb}
-            backendMovie={heroBackend}
-            reviews={reviews}
-            isInList={heroInList}
-            onWatch={openMovie}
-            onAdd={handleAddToList}
-          />
-          <MovieRow title="🔥 TRENDING THIS WEEK" movies={enrichWithBackend(tmdbTrending).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
-          <MovieRow title="POPULAR RIGHT NOW" movies={enrichWithBackend(tmdbPopular).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
-          <MovieRow title="ALL TIME TOP RATED" movies={enrichWithBackend(tmdbTopRated).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
-        </>
-      )}
-
-      <div className={styles.page}>
-        <div className={styles.searchWrap} style={{ padding: '20px 40px 0' }}>
-          <input
-            className={styles.searchInput}
-            placeholder="Search movies..."
-            value={searchQuery}
-            onChange={handleSearch}
-            style={{ width: '100%', maxWidth: '500px' }}
-          />
-        </div>
-
-        {searchQuery && (
-          <div className={styles.grid} style={{ padding: '20px 40px' }}>
-            {searchResults.map(m => {
-              const isInList = myTitleSet.has(normalizeTitle(m.title));
-              const be = isInList ? myMovies.find(mv => normalizeTitle(mv.title) === normalizeTitle(m.title)) : null;
-              const revs = be ? reviews.filter(r => r.movieId === be.id) : [];
-              const avg = revs.length ? Math.round(revs.reduce((s, r) => s + r.rating, 0) / revs.length) : 0;
-              return (
-                <MovieCard key={m.id} movie={m} isInList={isInList} reviewCount={revs.length} avgRating={avg} onClick={openMovie} />
-              );
-            })}
-          </div>
-        )}
+ return (
+  <div style={{ position: 'relative' }}>
+    <div style={{ position: 'absolute', top: '80px', left: '40px', zIndex: 10 }}>
+      <div style={{ position: 'relative', maxWidth: '400px' }}>
+        <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          placeholder="Search movies..."
+          value={searchQuery}
+          onChange={handleSearch}
+          style={{
+            width: '100%',
+            padding: '10px 16px 10px 40px',
+            background: 'rgba(0,0,0,0.5)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '4px',
+            color: 'white',
+            fontSize: '14px',
+            outline: 'none',
+          }}
+        />
       </div>
     </div>
-  );
+
+    {!searchQuery && (
+      <>
+        <Hero
+          tmdbMovie={heroTmdb}
+          backendMovie={heroBackend}
+          reviews={reviews}
+          isInList={heroInList}
+          onWatch={openMovie}
+          onAdd={handleAddToList}
+        />
+        <MovieRow title="🔥 TRENDING THIS WEEK" movies={enrichWithBackend(tmdbTrending).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
+        <MovieRow title="POPULAR RIGHT NOW" movies={enrichWithBackend(tmdbPopular).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
+        <MovieRow title="ALL TIME TOP RATED" movies={enrichWithBackend(tmdbTopRated).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
+      </>
+    )}
+
+    {searchQuery && (
+      <div className={styles.grid} style={{ padding: '80px 40px 0' }}>
+        {searchResults.map(m => {
+          const isInList = myTitleSet.has(normalizeTitle(m.title));
+          const be = isInList ? myMovies.find(mv => normalizeTitle(mv.title) === normalizeTitle(m.title)) : null;
+          const revs = be ? reviews.filter(r => r.movieId === be.id) : [];
+          const avg = revs.length ? Math.round(revs.reduce((s, r) => s + r.rating, 0) / revs.length) : 0;
+          return (
+            <MovieCard key={m.id} movie={m} isInList={isInList} reviewCount={revs.length} avgRating={avg} onClick={openMovie} />
+          );
+        })}
+      </div>
+    )}
+  </div>
+);
 }

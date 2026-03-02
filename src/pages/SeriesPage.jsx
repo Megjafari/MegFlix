@@ -26,7 +26,30 @@ export default function SeriesPage({
   };
 
   return (
-    <div>
+  <div style={{ position: 'relative' }}>
+    <div style={{ position: 'absolute', top: '80px', left: '40px', zIndex: 10 }}>
+      <div style={{ position: 'relative', maxWidth: '400px' }}>
+        <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          placeholder="Search movies..."
+          value={searchQuery}
+          onChange={handleSearch}
+          style={{
+            width: '100%',
+            padding: '10px 16px 10px 40px',
+            background: 'rgba(0,0,0,0.5)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '4px',
+            color: 'white',
+            fontSize: '14px',
+            outline: 'none',
+          }}
+        />
+      </div>
+    </div>
+
       {!searchQuery && (
         <>
           <Hero
@@ -43,17 +66,6 @@ export default function SeriesPage({
         </>
       )}
 
-      <div className={styles.page}>
-        <div style={{ padding: '20px 40px 0' }}>
-          <input
-            className={styles.searchInput}
-            placeholder="Search series..."
-            value={searchQuery}
-            onChange={handleSearch}
-            style={{ width: '100%', maxWidth: '500px' }}
-          />
-        </div>
-
         {searchQuery && (
           <div className={styles.grid} style={{ padding: '20px 40px' }}>
             {searchResults.map(m => {
@@ -68,6 +80,6 @@ export default function SeriesPage({
           </div>
         )}
       </div>
-    </div>
+
   );
 }
