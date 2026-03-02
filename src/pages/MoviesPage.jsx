@@ -71,7 +71,7 @@ export default function MoviesPage({
           onWatch={openMovie}
           onAdd={handleAddToList}
         />
-        <MovieRow title="🔥 TRENDING THIS WEEK" movies={enrichWithBackend(tmdbTrending).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
+        <MovieRow title="TRENDING THIS WEEK" movies={enrichWithBackend(tmdbTrending).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
         <MovieRow title="POPULAR RIGHT NOW" movies={enrichWithBackend(tmdbPopular).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
         <MovieRow title="ALL TIME TOP RATED" movies={enrichWithBackend(tmdbTopRated).slice(0, 14)} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openMovie} />
       </>
