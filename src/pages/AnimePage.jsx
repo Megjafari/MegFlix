@@ -27,13 +27,13 @@ export default function AnimePage({
 
   return (
   <div style={{ position: 'relative' }}>
-    <div style={{ position: 'absolute', top: '80px', left: '40px', zIndex: 10 }}>
-      <div style={{ position: 'relative', maxWidth: '400px' }}>
+    <div style={{ position: 'absolute', top: '60px', left: '0', right: '0', margin: '0 auto', zIndex: 10, width: window.innerWidth <= 768 ? '70%' : '400px', marginLeft: 'auto', marginRight: 'auto' }}>
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
         <input
-          placeholder="Search movies..."
+          placeholder="Search anime..."
           value={searchQuery}
           onChange={handleSearch}
           style={{
@@ -66,14 +66,14 @@ export default function AnimePage({
             onWatch={(m) => openAnime(m)}
             onAdd={(m) => handleAddToList({ ...m, overview: m.synopsis })}
           />
-          <MovieRow title="🔥 CURRENTLY AIRING" movies={jikanTrending.slice(0, 14).map(a => ({ id: a.mal_id, title: a.title, poster_path: null, _jikanImage: a.images?.jpg?.large_image_url, overview: a.synopsis, vote_average: a.score }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openAnime} />
+          <MovieRow title="CURRENTLY AIRING" movies={jikanTrending.slice(0, 14).map(a => ({ id: a.mal_id, title: a.title, poster_path: null, _jikanImage: a.images?.jpg?.large_image_url, overview: a.synopsis, vote_average: a.score }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openAnime} />
           <MovieRow title="MOST POPULAR ANIME" movies={jikanPopular.slice(0, 14).map(a => ({ id: a.mal_id, title: a.title, poster_path: null, _jikanImage: a.images?.jpg?.large_image_url, overview: a.synopsis, vote_average: a.score }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openAnime} />
-          <MovieRow title="⭐ TOP RATED ANIME" movies={jikanTopRated.slice(0, 14).map(a => ({ id: a.mal_id, title: a.title, poster_path: null, _jikanImage: a.images?.jpg?.large_image_url, overview: a.synopsis, vote_average: a.score }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openAnime} />
+          <MovieRow title="TOP RATED ANIME" movies={jikanTopRated.slice(0, 14).map(a => ({ id: a.mal_id, title: a.title, poster_path: null, _jikanImage: a.images?.jpg?.large_image_url, overview: a.synopsis, vote_average: a.score }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={openAnime} />
         </>
       )}
 
         {searchQuery && (
-          <div className={styles.grid} style={{ padding: '20px 40px' }}>
+          <div className={styles.grid} style={{ padding: '20px 40px', gridTemplateColumns: 'repeat(2, 1fr)' }}>
             {searchResults.map(a => {
               const m = { id: a.mal_id, title: a.title, poster_path: null, _jikanImage: a.images?.jpg?.large_image_url, overview: a.synopsis, vote_average: a.score };
               const isInList = myTitleSet.has(normalizeTitle(m.title));
