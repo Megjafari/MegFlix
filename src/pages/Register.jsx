@@ -10,7 +10,7 @@ export default function Register({ setTab }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5098/api/auth/register", {
+      await axios.post("https://movielibraryapi.onrender.com/api/auth/register", {
         username,
         email,
         password,
