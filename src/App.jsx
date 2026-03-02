@@ -268,8 +268,8 @@ export default function App() {
         <Route path="/anime" element={<AnimePage {...sharedProps} jikanTrending={jikanTrending} jikanPopular={jikanPopular} jikanTopRated={jikanTopRated} />} />
         <Route path="/mylist" element={<MyList {...sharedProps} handleEditMovie={handleEditMovie} />} />
         <Route path="/reviews" element={<ReviewsPage {...sharedProps} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login tmdbTrending={tmdbTrending} />} />
+        <Route path="/register" element={<Register tmdbTrending={tmdbTrending} />} />
       </Routes>
 
       {(selectedTmdb || selectedBackend) && (
