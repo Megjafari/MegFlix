@@ -27,13 +27,13 @@ export default function SeriesPage({
 
   return (
   <div style={{ position: 'relative' }}>
-    <div style={{ position: 'absolute', top: '80px', left: '40px', zIndex: 10 }}>
-      <div style={{ position: 'relative', maxWidth: '400px' }}>
+    <div style={{ position: 'absolute', top: '60px', left: '0', right: '0', margin: '0 auto', zIndex: 10, width: window.innerWidth <= 768 ? '70%' : '400px', marginLeft: 'auto', marginRight: 'auto' }}>
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
         <input
-          placeholder="Search movies..."
+          placeholder="Search series..."
           value={searchQuery}
           onChange={handleSearch}
           style={{
@@ -60,14 +60,14 @@ export default function SeriesPage({
             onWatch={(m) => openMovie({ ...m, title: m.name || m.title })}
             onAdd={(m) => handleAddToList({ ...m, title: m.name || m.title })}
           />
-          <MovieRow title="🔥 TRENDING SERIES" movies={tmdbTrendingTv.slice(0, 14).map(m => ({ ...m, title: m.name || m.title }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={(m) => openMovie({ ...m, title: m.name || m.title })} />
+          <MovieRow title="TRENDING SERIES" movies={tmdbTrendingTv.slice(0, 14).map(m => ({ ...m, title: m.name || m.title }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={(m) => openMovie({ ...m, title: m.name || m.title })} />
           <MovieRow title="POPULAR SERIES" movies={tmdbPopularTv.slice(0, 14).map(m => ({ ...m, title: m.name || m.title }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={(m) => openMovie({ ...m, title: m.name || m.title })} />
           <MovieRow title="TOP RATED SERIES" movies={tmdbTopRatedTv.slice(0, 14).map(m => ({ ...m, title: m.name || m.title }))} myMovieTitles={myTitleSet} reviews={reviews} onCardClick={(m) => openMovie({ ...m, title: m.name || m.title })} />
         </>
       )}
 
         {searchQuery && (
-          <div className={styles.grid} style={{ padding: '20px 40px' }}>
+          <div className={styles.grid} style={{ padding: '20px 40px', gridTemplateColumns: 'repeat(2, 1fr)' }}>
             {searchResults.map(m => {
               const isInList = myTitleSet.has(normalizeTitle(m.title));
               const be = isInList ? myMovies.find(mv => normalizeTitle(mv.title) === normalizeTitle(m.title)) : null;
