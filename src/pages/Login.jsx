@@ -32,7 +32,7 @@ export default function Login({ tmdbTrending }) {
       login(res.data.token);
       navigate('/');
     } catch (err) {
-      setError("Invalid email or password");
+      setError(err.response?.data || "Invalid email or password");
     }
     setLoading(false);
   };
