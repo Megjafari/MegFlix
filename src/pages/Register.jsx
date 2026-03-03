@@ -30,7 +30,7 @@ export default function Register({ tmdbTrending }) {
       await axios.post("https://movielibraryapi.onrender.com/api/auth/register", { username, email, password });
       navigate('/login');
     } catch (err) {
-      setError("Something went wrong, please try again");
+      setError(err.response?.data || "Something went wrong, please try again");
     }
     setLoading(false);
   };
