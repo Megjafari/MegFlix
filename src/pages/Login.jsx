@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Login({ tmdbTrending }) {
   const [email, setEmail] = useState("");
@@ -10,6 +10,7 @@ export default function Login({ tmdbTrending }) {
   const [loading, setLoading] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!tmdbTrending?.length) return;
@@ -29,6 +30,7 @@ export default function Login({ tmdbTrending }) {
     try {
       const res = await axios.post("https://movielibraryapi.onrender.com/api/auth/login", { email, password });
       login(res.data.token);
+      navigate('/');
     } catch (err) {
       setError("Invalid email or password");
     }
