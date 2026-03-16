@@ -82,8 +82,8 @@ export default function App() {
       ]);
       setMyMovies(movs);
       setReviews(revs);
-    } catch {
-      showToast('⚠️ Could not reach backend.', 'error');
+    } catch (err) {
+      showToast(`⚠️ Could not reach backend: ${err.message}`, 'error');
     }
     setLoadingBackend(false);
   };
@@ -194,7 +194,9 @@ export default function App() {
       setMyMovies(prev => [...prev, created]);
       setSelectedBackend(created);
       showToast('✅ Added to your list!', 'success');
-    } catch { showToast('❌ Could not add movie', 'error'); }
+    } catch (err) {
+      showToast(`❌ Could not add movie: ${err.message}`, 'error');
+    }
   };
 
   const handleEditMovie = async (id, data) => {
@@ -202,7 +204,9 @@ export default function App() {
       await backendApi.updateMovie(id, data);
       setMyMovies(prev => prev.map(m => m.id === id ? { ...m, ...data } : m));
       showToast('✅ Movie updated!', 'success');
-    } catch { showToast('❌ Could not update', 'error'); }
+    } catch (err) {
+      showToast(`❌ Could not update: ${err.message}`, 'error');
+    }
   };
 
   const handleDeleteFromList = async (id) => {
@@ -213,7 +217,9 @@ export default function App() {
       setReviews(prev => prev.filter(r => r.movieId !== id));
       closeModal();
       showToast('🗑 Movie removed');
-    } catch { showToast('❌ Could not remove', 'error'); }
+    } catch (err) {
+      showToast(`❌ Could not remove: ${err.message}`, 'error');
+    }
   };
 
   const handleCreateReview = async (data) => {
@@ -221,7 +227,9 @@ export default function App() {
       const created = await backendApi.createReview(data, token);
       setReviews(prev => [...prev, created]);
       showToast('⭐ Review published!', 'success');
-    } catch { showToast('❌ Could not save review', 'error'); }
+    } catch (err) {
+      showToast(`❌ Could not save review: ${err.message}`, 'error');
+    }
   };
 
   const handleUpdateReview = async (id, data) => {
@@ -229,7 +237,9 @@ export default function App() {
       await backendApi.updateReview(id, data, token);
       setReviews(prev => prev.map(r => r.id === id ? { ...r, ...data } : r));
       showToast('✅ Review updated!', 'success');
-    } catch { showToast('❌ Could not update review', 'error'); }
+    } catch (err) {
+      showToast(`❌ Could not update review: ${err.message}`, 'error');
+    }
   };
 
   const handleDeleteReview = async (id) => {
@@ -238,7 +248,9 @@ export default function App() {
       await backendApi.deleteReview(id, token);
       setReviews(prev => prev.filter(r => r.id !== id));
       showToast('🗑 Review deleted');
-    } catch { showToast('❌ Could not delete review', 'error'); }
+    } catch (err) {
+      showToast(`❌ Could not delete review: ${err.message}`, 'error');
+    }
   };
 
   const sharedProps = {
