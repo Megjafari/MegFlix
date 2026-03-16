@@ -23,6 +23,7 @@
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
 - [Deployment](#deployment)
+- [Reflection](#reflection)
 
 ---
 
@@ -155,6 +156,19 @@ VITE_TMDB_KEY=your-tmdb-api-key
 The frontend is deployed on **Vercel** with automatic deployments on every push to `main`.
 
 > ⚠️ **Note:** The backend runs on Render's free tier and may take 1–2 minutes to respond after inactivity. This affects login, register, and watchlist features on first use.
+
+---
+
+## Reflection
+
+**What went well**
+The layered architecture with controllers, services and DTOs came together naturally and made the codebase easy to reason about. Connecting the React frontend to the API using fetch and managing JWT tokens in headers worked smoothly. Integrating TMDB, Jikan and the watchlist flow ended up being one of the more rewarding parts of the project.
+
+**What was challenging**
+Error handling took time to get right — catching API error messages and surfacing them to the user in a meaningful way required refactoring the fetch layer. CORS configuration was also tricky early on.
+
+**Possible improvements**
+Given more time I would add pagination, stronger input validation on the frontend and unit tests for the service layer.
 
 ---
 
