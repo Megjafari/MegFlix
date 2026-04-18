@@ -26,11 +26,15 @@ export default function Register({ tmdbTrending }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(""); // lägg till denna rad
-    const { error } = await supabase.auth.signUp({ email, password });
+    setError("");
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
       setError(error.message);
+    } else if (data.session) {
+      // Direkt inloggad — ingen email confirmation
+      navigate('/');
     } else {
+      // Email confirmation krävs fortfarande
       setSuccess(true);
     }
     setLoading(false);
