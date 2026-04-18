@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
 export default function Register({ tmdbTrending }) {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const navigate = useNavigate();
@@ -26,11 +26,12 @@ export default function Register({ tmdbTrending }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      await axios.post("https://movielibraryapi.onrender.com/api/auth/register", { username, email, password });
-      navigate('/login');
-    } catch (err) {
-      setError(err.response?.data || "Something went wrong, please try again");
+    setError(""); // lägg till denna rad
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      setError(error.message);
+    } else {
+      setSuccess(true);
     }
     setLoading(false);
   };
@@ -79,29 +80,34 @@ export default function Register({ tmdbTrending }) {
 
         {error && <p style={{ color: '#e50914', marginBottom: '16px', fontSize: '0.9rem' }}>{error}</p>}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} style={inputStyle} />
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              padding: '14px',
-              background: '#e50914',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '1rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              marginTop: '8px',
-              opacity: loading ? 0.7 : 1,
-            }}
-          >
-            {loading ? 'Creating account...' : 'Register'}
-          </button>
-        </form>
+        {success ? (
+          <p style={{ color: '#4ade80', fontSize: '1rem', textAlign: 'center' }}>
+            Check your email to confirm your account! 🎉
+          </p>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                padding: '14px',
+                background: '#e50914',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '1rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                marginTop: '8px',
+                opacity: loading ? 0.7 : 1,
+              }}
+            >
+              {loading ? 'Creating account...' : 'Register'}
+            </button>
+          </form>
+        )}
 
         <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: '24px', fontSize: '0.9rem', textAlign: 'center' }}>
           Already have an account?{' '}

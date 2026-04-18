@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
@@ -10,7 +8,6 @@ export default function Login({ tmdbTrending }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,12 +25,11 @@ export default function Login({ tmdbTrending }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      const res = await axios.post("https://movielibraryapi.onrender.com/api/auth/login", { email, password });
-      login(res.data.token);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setError(error.message);
+    } else {
       navigate('/');
-    } catch (err) {
-      setError(err.response?.data || "Invalid email or password");
     }
     setLoading(false);
   };
